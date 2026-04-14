@@ -239,7 +239,7 @@ Se logró implementar una solución de persistencia políglota, combinando bases
 
 ---
 
-## 👩‍💻 Autora
+## 👩‍💻 Autor
 
-Laura Valentina
+CARLOS JULIO BOHORQUEZ MEJIA 
 
