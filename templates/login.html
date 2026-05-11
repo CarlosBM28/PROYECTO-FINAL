@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VetStock</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+
+<style>
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+}
+
+body{
+font-family:'DM Sans',sans-serif;
+display:flex;
+height:100vh;
+background:linear-gradient(135deg,#ecfeff,#f8fafc);
+}
+
+.left{
+width:50%;
+background:linear-gradient(135deg,#115e59,#14b8a6);
+color:white;
+display:flex;
+flex-direction:column;
+justify-content:center;
+padding:80px;
+}
+
+.left h1{
+font-family:'Syne',sans-serif;
+font-size:55px;
+}
+
+.left p{
+font-size:18px;
+margin-top:20px;
+}
+
+.right{
+flex:1;
+display:flex;
+justify-content:center;
+align-items:center;
+}
+
+.card{
+background:white;
+padding:45px;
+border-radius:20px;
+width:450px;
+box-shadow:0 20px 40px rgba(0,0,0,.12);
+}
+
+.tabs{
+display:flex;
+margin-bottom:25px;
+}
+
+.tab{
+flex:1;
+padding:14px;
+border:none;
+cursor:pointer;
+background:#f1f5f9;
+font-weight:700;
+border-radius:10px;
+margin-right:5px;
+}
+
+.tab.active{
+background:#14b8a6;
+color:white;
+}
+
+input,select{
+width:100%;
+padding:15px;
+margin:10px 0;
+border:1px solid #ccc;
+border-radius:12px;
+}
+
+button.submit{
+width:100%;
+padding:16px;
+border:none;
+border-radius:12px;
+background:linear-gradient(135deg,#0f766e,#14b8a6);
+color:white;
+font-size:16px;
+font-weight:700;
+cursor:pointer;
+}
+
+.form{
+display:none;
+}
+
+.form.active{
+display:block;
+}
+
+.msg{
+margin-top:15px;
+font-weight:600;
+color:#dc2626;
+}
+</style>
+</head>
+<body>
+
+<div class="left">
+<h1>🐾 VetStock</h1>
+<p>Sistema inteligente de gestión veterinaria</p>
+</div>
+
+<div class="right">
+<div class="card">
+
+<div class="tabs">
+<button class="tab active" onclick="showForm('login',event)">Iniciar Sesión</button>
+<button class="tab" onclick="showForm('register',event)">Registrarse</button>
+</div>
+
+<!-- LOGIN -->
+<div id="login" class="form active">
+<h2>Ingresar</h2>
+
+<input type="email" id="loginEmail" placeholder="Correo">
+<input type="password" id="loginPassword" placeholder="Contraseña">
+
+<button class="submit" onclick="login()">Ingresar</button>
+
+<div id="loginMsg" class="msg"></div>
+</div>
+
+<!-- REGISTER -->
+<div id="register" class="form">
+<h2>Crear Cuenta</h2>
+
+<input type="text" id="regNombre" placeholder="Nombre completo">
+<input type="email" id="regEmail" placeholder="Correo">
+<input type="password" id="regPassword" placeholder="Contraseña">
+
+<select id="regRol">
+<option value="cliente">Cliente</option>
+<option value="admin">Administrador</option>
+</select>
+
+<button class="submit" onclick="registerUser()">Registrarse</button>
+
+<div id="regMsg" class="msg"></div>
+</div>
+
+</div>
+</div>
+
+<script>
+
+function showForm(form,e){
+document.querySelectorAll('.form').forEach(f=>f.classList.remove('active'));
+document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+
+document.getElementById(form).classList.add('active');
+e.target.classList.add('active');
+}
+
+async function registerUser(){
+
+const nombre=document.getElementById("regNombre").value;
+const email=document.getElementById("regEmail").value;
+const password=document.getElementById("regPassword").value;
+const rol=document.getElementById("regRol").value;
+
+const res=await fetch('/auth/register',{
+method:'POST',
+headers:{'Content-Type':'application/json'},
+body:JSON.stringify({nombre,email,password,rol})
+});
+
+const data=await res.json();
+
+document.getElementById("regMsg").innerText=data.mensaje || data.error;
+
+if(res.ok){
+setTimeout(()=>{
+showForm('login',{target:document.querySelectorAll('.tab')[0]});
+},1500);
+}
+}
+
+async function login(){
+
+const email=document.getElementById("loginEmail").value;
+const password=document.getElementById("loginPassword").value;
+
+const res=await fetch('/auth/login',{
+method:'POST',
+headers:{'Content-Type':'application/json'},
+body:JSON.stringify({email,password})
+});
+
+const data=await res.json();
+
+if(res.ok){
+
+localStorage.setItem("token",data.token);
+localStorage.setItem("rol",data.rol);
+localStorage.setItem("nombre",data.nombre);
+
+window.location.href="/dashboard";
+
+}else{
+document.getElementById("loginMsg").innerText=data.error;
+}
+}
+
+</script>
+
+</body>
+</html>

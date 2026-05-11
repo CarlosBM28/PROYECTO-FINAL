@@ -2,247 +2,321 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<title>Inventario Veterinaria</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VetStock Dashboard</title>
 
-<link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
 
 <style>
-body {
-    font-family: 'Poppins', sans-serif;
-    background: #f4f6f9;
-    margin: 0;
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
 }
 
-header {
-    background: linear-gradient(90deg, #27ae60, #2ecc71);
-    color: white;
-    padding: 20px;
-    text-align: center;
+body{
+font-family:'DM Sans',sans-serif;
+background:#f8fafc;
+padding:40px;
+color:#0f172a;
 }
 
-.container {
-    width: 90%;
-    margin: 20px auto;
+.container{
+max-width:1200px;
+margin:auto;
 }
 
-.card {
-    background: white;
-    padding: 20px;
-    margin-bottom: 20px;
-    border-radius: 12px;
-    box-shadow: 0px 4px 12px rgba(0,0,0,0.1);
+.header{
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin-bottom:35px;
 }
 
-input {
-    padding: 10px;
-    margin: 5px;
-    border: 1px solid #ccc;
-    border-radius: 6px;
+h1{
+font-family:'Syne',sans-serif;
+font-size:34px;
+color:#0f766e;
 }
 
-button {
-    padding: 10px 15px;
-    border: none;
-    background: #27ae60;
-    color: white;
-    border-radius: 6px;
-    cursor: pointer;
+.welcome{
+font-size:18px;
+font-weight:600;
+color:#334155;
 }
 
-button:hover {
-    background: #219150;
+.card{
+background:white;
+padding:30px;
+border-radius:22px;
+box-shadow:0 20px 45px rgba(15,23,42,0.08);
+margin-bottom:30px;
 }
 
-.delete-btn {
-    background: red;
+h2{
+font-family:'Syne',sans-serif;
+margin-bottom:20px;
+color:#0f172a;
 }
 
-.delete-btn:hover {
-    background: darkred;
+input{
+width:100%;
+padding:15px;
+margin:10px 0;
+border:1px solid #cbd5e1;
+border-radius:14px;
+font-size:15px;
 }
 
-table {
-    width: 100%;
-    border-collapse: collapse;
+input:focus{
+outline:none;
+border-color:#14b8a6;
+box-shadow:0 0 0 4px rgba(20,184,166,.12);
 }
 
-th {
-    background: #27ae60;
-    color: white;
-    padding: 10px;
+.form-grid{
+display:grid;
+grid-template-columns:repeat(4,1fr);
+gap:15px;
 }
 
-td {
-    padding: 10px;
-    border-bottom: 1px solid #ddd;
+button{
+border:none;
+padding:14px 18px;
+border-radius:14px;
+font-weight:700;
+cursor:pointer;
+transition:.25s;
+font-family:'DM Sans';
+}
+
+button:hover{
+transform:translateY(-2px);
+}
+
+.btn-insertar{
+background:linear-gradient(135deg,#0f766e,#14b8a6);
+color:white;
+}
+
+.btn-editar{
+background:linear-gradient(135deg,#f59e0b,#fbbf24);
+color:white;
+}
+
+.btn-eliminar{
+background:linear-gradient(135deg,#dc2626,#ef4444);
+color:white;
+}
+
+.btn-logout{
+background:#0f172a;
+color:white;
+}
+
+table{
+width:100%;
+border-collapse:collapse;
+margin-top:20px;
+}
+
+th{
+background:#0f766e;
+color:white;
+padding:14px;
+}
+
+td{
+padding:14px;
+border-bottom:1px solid #e2e8f0;
+text-align:center;
+}
+
+.actions{
+display:flex;
+gap:10px;
+justify-content:center;
 }
 </style>
 </head>
-
 <body>
-
-<header>
-    <h1>🐶 Sistema Inventario Veterinaria</h1>
-</header>
 
 <div class="container">
 
-    <!-- FORMULARIO -->
-    <div class="card">
-        <h2>Agregar / Editar Producto</h2>
+<div class="header">
+<h1>🐾 VetStock Dashboard</h1>
+<button class="btn-logout" onclick="logout()">Cerrar sesión</button>
+</div>
 
-        <input id="nombre" placeholder="Nombre">
-        <input id="tipo" placeholder="Tipo">
-        <input id="precio" type="number" placeholder="Precio">
-        <input id="stock" type="number" placeholder="Stock">
+<p class="welcome" id="bienvenida"></p>
 
-        <button id="btnGuardar" onclick="crearProducto()">Guardar</button>
-    </div>
+<div class="card">
+<h2 id="tituloForm">Insertar Producto</h2>
 
-    <!-- TABLA -->
-    <div class="card">
-        <h2>Inventario</h2>
+<input type="hidden" id="productoId">
 
-        <button onclick="cargarProductos()">Actualizar</button>
+<div class="form-grid">
+<input id="nombre" placeholder="Nombre">
+<input id="tipo" placeholder="Tipo">
+<input id="precio" placeholder="Precio">
+<input id="stock" placeholder="Stock">
+</div>
 
-        <table>
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Nombre</th>
-                    <th>Tipo</th>
-                    <th>Precio</th>
-                    <th>Stock</th>
-                    <th>Acciones</th>
-                </tr>
-            </thead>
-            <tbody id="tablaProductos"></tbody>
-        </table>
-    </div>
+<br>
+
+<button class="btn-insertar" id="btnGuardar" onclick="guardarProducto()">
+Insertar
+</button>
+</div>
+
+<div class="card">
+<h2>Inventario</h2>
+
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Nombre</th>
+<th>Tipo</th>
+<th>Precio</th>
+<th>Stock</th>
+<th>Acciones</th>
+</tr>
+</thead>
+
+<tbody id="tablaProductos"></tbody>
+</table>
+</div>
 
 </div>
 
 <script>
-const API = "http://127.0.0.1:5000";
-let editando = false;
-let idEditar = null;
 
-// 🔹 Crear producto
-function crearProducto() {
+const token = localStorage.getItem("token");
 
-    let nombre = document.getElementById("nombre").value;
-    let tipo = document.getElementById("tipo").value;
-    let precio = document.getElementById("precio").value;
-    let stock = document.getElementById("stock").value;
-
-    if (!nombre || !tipo || !precio || !stock) {
-        alert("Todos los campos son obligatorios");
-        return;
-    }
-
-    fetch(API + "/productos", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-            nombre: nombre,
-            tipo: tipo,
-            precio: parseFloat(precio),
-            stock: parseInt(stock)
-        })
-    })
-    .then(res => res.json())
-    .then(data => {
-        console.log(data);
-        alert(data.mensaje || data.error);
-        cargarProductos();
-    })
-    .catch(error => console.error(error));
+if(!token){
+window.location.href="/";
 }
 
-// 🔹 Cargar productos
-function cargarProductos() {
-    fetch(API + "/productos")
-    .then(res => res.json())
-    .then(data => {
-        let tabla = "";
-        data.forEach(p => {
-            tabla += `
-                <tr>
-                    <td>${p.id}</td>
-                    <td>${p.nombre}</td>
-                    <td>${p.tipo}</td>
-                    <td>$${p.precio}</td>
-                    <td>${p.stock}</td>
-                    <td>
-                        <button onclick="editarProducto(${p.id}, '${p.nombre}', '${p.tipo}', ${p.precio}, ${p.stock})">Editar</button>
-                        <button class="delete-btn" onclick="eliminarProducto(${p.id})">Eliminar</button>
-                    </td>
-                </tr>
-            `;
-        });
-        document.getElementById("tablaProductos").innerHTML = tabla;
-    });
+document.getElementById("bienvenida").innerText =
+"Bienvenido, " + localStorage.getItem("nombre");
+
+async function cargarProductos(){
+
+const res = await fetch('/productos',{
+headers:{
+'Authorization':'Bearer ' + token
+}
+});
+
+const productos = await res.json();
+
+let html='';
+
+productos.forEach(p=>{
+html+=`
+<tr>
+<td>${p.id}</td>
+<td>${p.nombre}</td>
+<td>${p.tipo}</td>
+<td>$${p.precio}</td>
+<td>${p.stock}</td>
+<td>
+<div class="actions">
+<button class="btn-editar" onclick='editarProducto(${JSON.stringify(p)})'>
+Editar
+</button>
+
+<button class="btn-eliminar" onclick="eliminarProducto(${p.id})">
+Eliminar
+</button>
+</div>
+</td>
+</tr>
+`;
+});
+
+document.getElementById("tablaProductos").innerHTML=html;
 }
 
-// 🔹 Editar producto
-function editarProducto(id, nombre, tipo, precio, stock) {
-    document.getElementById("nombre").value = nombre;
-    document.getElementById("tipo").value = tipo;
-    document.getElementById("precio").value = precio;
-    document.getElementById("stock").value = stock;
+async function guardarProducto(){
 
-    editando = true;
-    idEditar = id;
+const id=document.getElementById("productoId").value;
 
-    document.getElementById("btnGuardar").innerText = "Actualizar";
+const producto={
+nombre:document.getElementById("nombre").value,
+tipo:document.getElementById("tipo").value,
+precio:document.getElementById("precio").value,
+stock:document.getElementById("stock").value
+};
+
+let url='/productos';
+let method='POST';
+
+if(id){
+url='/productos/'+id;
+method='PUT';
 }
 
-// 🔹 Actualizar producto
-function actualizarProducto() {
-    fetch(API + "/productos/" + idEditar, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-            nombre: document.getElementById("nombre").value,
-            tipo: document.getElementById("tipo").value,
-            precio: document.getElementById("precio").value,
-            stock: document.getElementById("stock").value
-        })
-    })
-    .then(res => res.json())
-    .then(data => {
-        alert(data.mensaje);
-        limpiarFormulario();
-        cargarProductos();
-        editando = false;
-        document.getElementById("btnGuardar").innerText = "Guardar";
-    });
-}
+await fetch(url,{
+method:method,
+headers:{
+'Content-Type':'application/json',
+'Authorization':'Bearer ' + token
+},
+body:JSON.stringify(producto)
+});
 
-// 🔹 Eliminar producto
-function eliminarProducto(id) {
-    if(confirm("¿Eliminar producto?")) {
-        fetch(API + "/productos/" + id, {
-            method: "DELETE"
-        })
-        .then(res => res.json())
-        .then(data => {
-            alert(data.mensaje);
-            cargarProductos();
-        });
-    }
-}
-
-// 🔹 Limpiar formulario
-function limpiarFormulario() {
-    document.getElementById("nombre").value = "";
-    document.getElementById("tipo").value = "";
-    document.getElementById("precio").value = "";
-    document.getElementById("stock").value = "";
-}
-
-// Cargar al iniciar
+limpiarFormulario();
 cargarProductos();
+}
+
+function editarProducto(producto){
+
+document.getElementById("productoId").value=producto.id;
+document.getElementById("nombre").value=producto.nombre;
+document.getElementById("tipo").value=producto.tipo;
+document.getElementById("precio").value=producto.precio;
+document.getElementById("stock").value=producto.stock;
+
+document.getElementById("tituloForm").innerText="Editar Producto";
+document.getElementById("btnGuardar").innerText="Actualizar";
+document.getElementById("btnGuardar").className="btn-editar";
+}
+
+async function eliminarProducto(id){
+
+if(!confirm("¿Eliminar producto?")) return;
+
+await fetch('/productos/'+id,{
+method:'DELETE',
+headers:{
+'Authorization':'Bearer ' + token
+}
+});
+
+cargarProductos();
+}
+
+function limpiarFormulario(){
+document.getElementById("productoId").value='';
+document.getElementById("nombre").value='';
+document.getElementById("tipo").value='';
+document.getElementById("precio").value='';
+document.getElementById("stock").value='';
+
+document.getElementById("tituloForm").innerText="Insertar Producto";
+document.getElementById("btnGuardar").innerText="Insertar";
+document.getElementById("btnGuardar").className="btn-insertar";
+}
+
+function logout(){
+localStorage.clear();
+window.location.href="/";
+}
+
+cargarProductos();
+
 </script>
 
 </body>
